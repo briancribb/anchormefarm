@@ -41,6 +41,8 @@ try {
 }
 
 module.exports = (eleventyConfig) => {
+  eleventyConfig.addPassthroughCopy("js/index.js");
+
   // Recognize Sass as a "template languages"
   eleventyConfig.addTemplateFormats("scss");
 
