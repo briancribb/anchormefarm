@@ -92,7 +92,7 @@ module.exports = (eleventyConfig) => {
     console.log(`Generating image(s) from:  ${src}`)
     let options = {
       widths: [600, 900, 1500],
-      formats: ["jpeg", "png"],
+      formats: ["auto"],
       urlPath: "/img/",
       outputDir: "./_site/img/",
       filenameFormat: function (id, src, width, format, options) {
