@@ -1,8 +1,13 @@
+
 const fs = require("node:fs");
 const path = require("node:path");
 const sass = require("sass");
 const browserslist = require("browserslist");
 const { transform, browserslistToTargets } = require("lightningcss");
+//const { eleventyImageTransformPlugin } = require("@11ty/eleventy-img");
+
+const Image = require("@11ty/eleventy-img")
+
 
 // Set default transpiling targets
 let browserslistTargets = "> 0.2% and not dead";
@@ -41,7 +46,10 @@ try {
 }
 
 module.exports = (eleventyConfig) => {
-  eleventyConfig.addPassthroughCopy("js/index.js");
+
+  eleventyConfig.addPassthroughCopy("js");
+  eleventyConfig.addPassthroughCopy("img");
+
 
   // Recognize Sass as a "template languages"
   eleventyConfig.addTemplateFormats("scss");
@@ -75,4 +83,44 @@ module.exports = (eleventyConfig) => {
       };
     },
   });
+
+
+
+  // https://www.brycewray.com/posts/2021/04/using-eleventys-official-image-plugin/s
+  // --- START, eleventy-img
+  function imageShortcode(src, alt, sizes="(min-width: 1024px) 100vw, 50vw") {
+    console.log(`Generating image(s) from:  ${src}`)
+    let options = {
+      widths: [600, 900, 1500],
+      formats: ["jpeg", "png"],
+      urlPath: "/img/",
+      outputDir: "./_site/img/",
+      filenameFormat: function (id, src, width, format, options) {
+        const extension = path.extname(src)
+        const name = path.basename(src, extension)
+        return `${name}-${width}w.${format}`
+      }
+    }
+
+    // generate images
+    Image(src, options)
+
+    let imageAttributes = {
+      alt,
+      sizes,
+      loading: "lazy",
+      decoding: "async",
+    }
+    // get metadata
+    metadata = Image.statsSync(src, options)
+    return Image.generateHTML(metadata, imageAttributes)
+  }
+  eleventyConfig.addShortcode("image", imageShortcode)
+  // --- END, eleventy-img
+
+
+
+
+
+
 };
